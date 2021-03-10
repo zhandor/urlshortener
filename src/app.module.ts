@@ -8,7 +8,7 @@ import { UserModule } from './modules/user/user.module';
 	imports: [
 		UserModule,
 		MongooseModule.forRoot(
-			'mongodb://localhost:27017/Citta-App?readPreference=primary&appname=MongoDB%20Compass&ssl=false',
+			'mongodb://localhost:27017/URL-shortner?readPreference=primary&appname=MongoDB%20Compass&ssl=false',
 		),
 	],
 	controllers: [AppController],

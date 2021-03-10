@@ -1,19 +1,43 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	Post,
+	Put,
+} from '@nestjs/common';
 
 import { UserService } from './user.service';
+import { User } from './userClass';
 
 @Controller('user')
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
+	@Post()
+	createUser(@Body() body: User): Promise<User> {
+		return this.userService.create(body);
+	}
+
 	@Get()
-	getAll(): any {
+	listAll(): Promise<User[]> {
 		console.log('user.controller.ts = getAll');
 		return this.userService.getAll();
 	}
 
-	@Post()
-	createUser(): string {
-		return this.userService.getInfo();
+	@Get(':email')
+	listByEmail(@Param('email') email: string): Promise<User> {
+		return this.userService.getByEmail(email);
+	}
+
+	@Put(':id')
+	updateUser(@Param('id') id: string, @Body() body: User): Promise<User> {
+		return this.userService.update(id, body);
+	}
+
+	@Delete(':id')
+	deleteUser(@Param('id') id: string): Promise<any> {
+		return this.userService.delete(id);
 	}
 }

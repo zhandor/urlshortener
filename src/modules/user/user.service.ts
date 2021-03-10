@@ -17,6 +17,10 @@ export class UserService {
 		return await this.userModel.findById(id).exec();
 	}
 
+	async getByEmail(email: string) {
+		return await this.userModel.findOne({ email }).exec();
+	}
+
 	async create(user: User) {
 		user.token = uuidv4();
 		const createdUser = new this.userModel(user);
@@ -24,20 +28,19 @@ export class UserService {
 	}
 
 	async update(id: string, user: User) {
-		await this.userModel.updateOne({ id }, user).exec();
-		return this.getById(id);
+		const options = { new: true, select: {}, omitUndefined: true };
+		return await this.userModel.findByIdAndUpdate(id, user, options).exec();
 	}
 
 	async delete(id: string) {
-		console.log({ id });
-		return { id };
-	}
-
-	getUser(): string {
-		return 'retornando o user';
-	}
-
-	getInfo(): string {
-		return uuidv4();
+		return await this.userModel
+			.findByIdAndRemove(id)
+			.then(() => {
+				return true;
+			})
+			.catch((error) => {
+				console.log({ error });
+				return false;
+			});
 	}
 }
