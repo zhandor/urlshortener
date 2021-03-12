@@ -21,8 +21,10 @@ export class UserController {
 	}
 
 	@Post('auth')
-	authUser(@Body() body: User): Promise<boolean> {
-		return this.userService.authUser(body);
+	async authUser(@Body() body: User): Promise<any> {
+		const token = await this.userService.verifyUser(body);
+		console.log({ access_token: token });
+		return { access_token: token };
 	}
 
 	@Get()

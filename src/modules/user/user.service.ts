@@ -1,7 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+	Injectable,
+	NotFoundException,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
 
 import { User } from './userClass';
 
@@ -18,11 +21,19 @@ export class UserService {
 	}
 
 	async getByEmail(email: string) {
-		return await this.userModel.findOne({ email }).exec();
+		return await this.userModel
+			.findOne({ email })
+			.exec()
+			.then((result) => {
+				if (result != null) {
+					return result;
+				} else {
+					throw new NotFoundException('O email não existe no sistema');
+				}
+			});
 	}
 
 	async create(user: User) {
-		user.token = uuidv4();
 		const createdUser = new this.userModel(user);
 		return await createdUser.save();
 	}
@@ -35,6 +46,22 @@ export class UserService {
 		} else {
 			throw new UnauthorizedException('Email ou Senha inválidos');
 		}
+	}
+
+	async verifyUser(user: User) {
+		const verUser = await this.userModel
+			.findOne({ email: user.email })
+			.exec()
+			.then((result) => {
+				if (result != null) {
+					return result.token;
+				} else {
+					return this.create(user).then((res) => {
+						return res.token;
+					});
+				}
+			});
+		return verUser;
 	}
 
 	async update(id: string, user: User) {

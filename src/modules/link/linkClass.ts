@@ -7,6 +7,4 @@ export class Link extends Document implements ILink {
 	url_target;
 	uri;
 	enable;
-	createdAt;
-	updatedAt;
 }

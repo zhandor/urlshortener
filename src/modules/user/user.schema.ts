@@ -4,8 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 const UserSchema = new mongoose.Schema(
 	{
 		email: { type: String, required: true },
-		token: { type: String, required: true, default: uuidv4() },
-		link: { type: [mongoose.Types.ObjectId] },
+		token: { type: String, required: true, default: () => uuidv4() },
+		link: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Link' }],
 		createdAt: { type: Date },
 		updatedAt: { type: Date },
 	},
