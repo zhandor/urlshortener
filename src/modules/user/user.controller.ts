@@ -20,6 +20,11 @@ export class UserController {
 		return this.userService.create(body);
 	}
 
+	@Post('auth')
+	authUser(@Body() body: User): Promise<boolean> {
+		return this.userService.authUser(body);
+	}
+
 	@Get()
 	listAll(): Promise<User[]> {
 		console.log('user.controller.ts = getAll');

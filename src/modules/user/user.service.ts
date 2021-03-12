@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,6 +25,16 @@ export class UserService {
 		user.token = uuidv4();
 		const createdUser = new this.userModel(user);
 		return await createdUser.save();
+	}
+
+	async authUser(user: User) {
+		console.log({ user });
+		const authUser = this.getByEmail(user.email);
+		if ((await authUser).token == user.token) {
+			return true;
+		} else {
+			throw new UnauthorizedException('Email ou Senha inválidos');
+		}
 	}
 
 	async update(id: string, user: User) {

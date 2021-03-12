@@ -7,10 +7,10 @@ import { LinkModule } from './modules/link/link.module';
 
 @Module({
 	imports: [
-		UserModule,
 		MongooseModule.forRoot(
 			'mongodb://localhost:27017/URL-shortner?readPreference=primary&appname=MongoDB%20Compass&ssl=false',
 		),
+		UserModule,
 		LinkModule,
 	],
 	controllers: [AppController],
