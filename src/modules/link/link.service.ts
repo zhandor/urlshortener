@@ -1,8 +1,13 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Hashids = require('hashids');
+
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { Link } from './linkClass';
+
+import { generateHash } from '../../util';
 
 @Injectable()
 export class LinkService {
@@ -17,10 +22,23 @@ export class LinkService {
 	}
 
 	async getByLink(link: string) {
-		return await (await this.linkModel.findOne({ link })).execPopulate();
+		return await this.linkModel.findOne({ link }).exec();
+	}
+
+	async getByHash(uri: string) {
+		return await this.linkModel.findOne({ link: { uri: uri } }).exec();
 	}
 
 	async create(link: Link) {
+		if (typeof link.uri == 'undefined') {
+			link.uri = generateHash(link.url_source);
+		} else {
+			const retunedLink = await this.getByHash(link.uri);
+			console.log(retunedLink);
+			return retunedLink;
+		}
+		link.url_source = 'localhost:3000/' + link.uri;
+
 		const createdLink = new this.linkModel(link);
 		return await createdLink.save();
 	}

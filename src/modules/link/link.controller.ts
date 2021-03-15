@@ -3,13 +3,18 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { LinkService } from './link.service';
 import { Link } from './linkClass';
 
+import { User } from '../user/userClass';
 @Controller('link')
 export class LinkController {
 	constructor(private readonly linkService: LinkService) {}
 
 	@Post()
-	createLink(@Body() body: Link): Promise<Link> {
-		return this.linkService.create(body);
+	createLink(@Body() body: any): any /*Promise<Link>*/ {
+		const { user } = body;
+		const { link } = body;
+		link.user = user;
+
+		return this.linkService.create(link);
 	}
 
 	@Get()
@@ -18,7 +23,7 @@ export class LinkController {
 	}
 
 	@Get(':link')
-	listByLink(@Param('link') link: string): Promise<Link> {
+	listByLink(@Param('link') link: string): any {
 		return this.linkService.getByLink(link);
 	}
 }
