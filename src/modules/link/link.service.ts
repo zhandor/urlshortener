@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Hashids = require('hashids');
-
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -26,7 +23,15 @@ export class LinkService {
 	}
 
 	async getByHash(uri: string) {
-		return await this.linkModel.findOne({ link: { uri: uri } }).exec();
+		return await this.linkModel
+			.find({ uri: uri })
+			.catch((err) => {
+				console.log({ err });
+			})
+			.then((result) => {
+				console.log(result);
+				return result;
+			});
 	}
 
 	async create(link: Link) {
@@ -35,7 +40,7 @@ export class LinkService {
 		} else {
 			const retunedLink = await this.getByHash(link.uri);
 			console.log(retunedLink);
-			return retunedLink;
+			return 'o texto escolhido para encurtar seu link ja está em uso';
 		}
 		link.url_source = 'localhost:3000/' + link.uri;
 
