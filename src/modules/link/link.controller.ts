@@ -22,8 +22,8 @@ export class LinkController {
 		return this.linkService.getAll();
 	}
 
-	@Get(':link')
-	listByLink(@Param('link') link: string): any {
-		return this.linkService.getByLink(link);
+	@Get(':hash')
+	listByLink(@Param('hash') hash: string): any {
+		return this.linkService.getByHash(hash);
 	}
 }
