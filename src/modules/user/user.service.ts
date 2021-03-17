@@ -20,6 +20,10 @@ export class UserService {
 		return await this.userModel.findById(id).exec();
 	}
 
+	getByToken(token: string) {
+		return this.userModel.findOne({ token }).exec();
+	}
+
 	async getByEmail(email: string) {
 		return await this.userModel
 			.findOne({ email })

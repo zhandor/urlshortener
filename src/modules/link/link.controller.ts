@@ -1,25 +1,37 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Get,
+	Param,
+	Post,
+	Req,
+	UseGuards,
+} from '@nestjs/common';
 
 import { LinkService } from './link.service';
 import { Link } from './linkClass';
 
-import { User } from '../user/userClass';
+import { AuthGuard } from '../user/auth.guard';
 @Controller('link')
 export class LinkController {
 	constructor(private readonly linkService: LinkService) {}
 
 	@Post()
-	createLink(@Body() body: any): any /*Promise<Link>*/ {
-		const { user } = body;
+	@UseGuards(AuthGuard)
+	createLink(@Req() req: any, @Body() body: any): any /*Promise<Link>*/ {
+		const { user } = req;
 		const { link } = body;
-		link.user = user;
+		link.user = user._id;
 
+		console.log('createLink:', link)
 		return this.linkService.create(link);
 	}
 
 	@Get()
-	listAll(): Promise<Link[]> {
-		return this.linkService.getAll();
+	@UseGuards(AuthGuard)
+	listAll(@Req() req: any): Promise<Link[]> {
+		const id: string = req.user._id;
+		return this.linkService.getAll(id);
 	}
 
 	@Get(':hash')

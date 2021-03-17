@@ -10,8 +10,8 @@ import { generateHash } from '../../util';
 export class LinkService {
 	constructor(@InjectModel('Link') private readonly linkModel: Model<Link>) {}
 
-	async getAll() {
-		return await this.linkModel.find().exec();
+	getAll(id: string) {
+		return this.linkModel.find({ user: id, enable: true }).exec();
 	}
 
 	async getById(id: string) {
@@ -40,7 +40,6 @@ export class LinkService {
 		} else {
 			const retunedLink = await this.getByHash(link.uri);
 			console.log(retunedLink);
-			return 'o texto escolhido para encurtar seu link ja está em uso';
 		}
 		link.url_source = 'localhost:3000/' + link.uri;
 
