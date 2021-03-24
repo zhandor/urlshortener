@@ -33,6 +33,22 @@ export class UserService {
 			});
 	}
 
+	async getByToken(token: string) {
+		return await this.userModel
+			.findOne({ token: token })
+			.exec()
+			.then((result) => {
+				console.log({ result });
+				if (result != null) {
+					return result;
+				} else {
+					throw new UnauthorizedException(
+						'Não existe usuário com o token: ' + token,
+					);
+				}
+			});
+	}
+
 	async create(user: User) {
 		const createdUser = new this.userModel(user);
 		return await createdUser.save();

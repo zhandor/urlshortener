@@ -4,10 +4,15 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { LinkController } from './link.controller';
 import { LinkService } from './link.service';
 import LinkSchema from './link.schema';
+import { UserModule } from '../user/user.module';
 
 @Module({
-	imports: [MongooseModule.forFeature([{ name: 'Link', schema: LinkSchema }])],
+	imports: [
+		MongooseModule.forFeature([{ name: 'Link', schema: LinkSchema }]),
+		UserModule,
+	],
 	controllers: [LinkController],
 	providers: [LinkService],
+	exports: [LinkService],
 })
 export class LinkModule {}

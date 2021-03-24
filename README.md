@@ -74,3 +74,5 @@ Nest is [MIT licensed](LICENSE).
 
 
 nest generate [tipo da entidade (module, controller, service)] modules/[nome da entidade]
+
+nest g guard auth modules/user --no-spec

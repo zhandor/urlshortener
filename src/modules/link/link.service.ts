@@ -14,6 +14,11 @@ export class LinkService {
 		return await this.linkModel.find().exec();
 	}
 
+	async getAllByUser(userId: string) {
+		console.log({ userId });
+		return await this.linkModel.find({ user: userId });
+	}
+
 	async getById(id: string) {
 		return await this.linkModel.findById(id).exec();
 	}
@@ -22,11 +27,12 @@ export class LinkService {
 		return await this.linkModel.findOne({ link }).exec();
 	}
 
-	async getByHash(uri: string) {
+	async getByHash(uri: string): Promise<Link> {
 		return await this.linkModel
 			.find({ uri: uri })
 			.catch((err) => {
 				console.log({ err });
+				return null;
 			})
 			.then((result) => {
 				console.log(result);
