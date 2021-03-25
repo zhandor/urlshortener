@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
@@ -27,17 +27,27 @@ export class LinkService {
 		return await this.linkModel.findOne({ link }).exec();
 	}
 
-	async getByHash(uri: string): Promise<Link> {
-		return await this.linkModel
-			.find({ uri: uri })
-			.catch((err) => {
-				console.log({ err });
-				return null;
-			})
-			.then((result) => {
-				console.log(result);
-				return result;
+	getByHash(uri: string) {
+		return this.linkModel.findOne({ uri }).exec();
+	}
+
+	async redirectByHash(uri: string) {
+		const link = await this.getByHash(uri);
+
+		console.log({
+			location: 'link.services => redirectByHash',
+			link: link.url_target,
+		});
+
+		if (link.url_target) {
+			console.log({
+				url: 'http://' + link.url_target,
+				statusCode: HttpStatus.FOUND,
 			});
+			return { url: link.url_target, statusCode: HttpStatus.FOUND };
+		} else {
+			throw new NotFoundException('Não encontramos seu encurtador');
+		}
 	}
 
 	async create(link: Link) {
@@ -51,7 +61,8 @@ export class LinkService {
 		link.url_source = 'localhost:3000/' + link.uri;
 
 		const createdLink = new this.linkModel(link);
-		return await createdLink.save();
+		console.log(await createdLink.save());
+		return true;
 	}
 
 	async update(id: string, link: Link) {

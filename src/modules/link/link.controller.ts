@@ -2,7 +2,6 @@ import {
 	Body,
 	Controller,
 	Get,
-	Headers,
 	Param,
 	Post,
 	Request,
@@ -19,10 +18,9 @@ export class LinkController {
 
 	@Post()
 	@UseGuards(AuthGuard)
-	createLink(@Body() body: any): any /*Promise<Link>*/ {
-		const { user } = body;
+	createLink(@Body() body: any, @Request() req: any): any /*Promise<Link>*/ {
 		const { link } = body;
-		link.user = user._id;
+		link.user = req.user._id;
 
 		return this.linkService.create(link);
 	}
