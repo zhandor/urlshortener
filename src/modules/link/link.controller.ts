@@ -36,6 +36,6 @@ export class LinkController {
 
 	@Get(':hash')
 	listByLink(@Param('hash') hash: string): any {
-		return this.linkService.getByHash(hash);
+		return this.linkService.redirectByHash(hash);
 	}
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
@@ -27,24 +27,31 @@ export class LinkService {
 		return await this.linkModel.findOne({ link }).exec();
 	}
 
-	async getByHash(uri: string): Promise<Link> {
-		return await this.linkModel
-			.find({ uri: uri })
-			.catch((err) => {
-				console.log({ err });
-				return null;
-			})
-			.then((result) => {
-				console.log(result);
-				return result;
-			});
+	getByHash(uri: string) {
+		return this.linkModel.findOne({ uri, enable: true }).exec();
+	}
+
+	async redirectByHash(uri: string) {
+		console.log('redirectByHash: ', uri)
+		const link = await this.getByHash(uri);
+
+		if (link) {
+			return { url: link.url_target, statusCode: HttpStatus.FOUND };
+		}
+
+		throw new NotFoundException();
+	}
+
+	saveStats(stats: any, linkId: string) {
+		console.log('Saving Stats...')
+		return Promise.resolve({ ...stats, link: linkId });
 	}
 
 	async create(link: Link) {
 		if (typeof link.uri == 'undefined') {
 			link.uri = generateHash(link.url_source);
 		} else {
-			const retunedLink = await this.getByHash(link.uri);
+			const retunedLink = await this.redirectByHash(link.uri);
 			console.log(retunedLink);
 			return 'o texto escolhido para encurtar seu link ja está em uso';
 		}
